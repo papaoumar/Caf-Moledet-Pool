@@ -23,7 +23,8 @@ export const ChatWidget: React.FC = () => {
     return {
       id: 'welcome',
       role: 'model',
-      text: text
+      text: text,
+      timestamp: Date.now()
     };
   };
 
@@ -77,7 +78,8 @@ export const ChatWidget: React.FC = () => {
     const newUserMsg: ChatMessage = {
       id: Date.now().toString(),
       role: 'user',
-      text: userText
+      text: userText,
+      timestamp: Date.now()
     };
     
     setMessages(prev => [...prev, newUserMsg]);
@@ -94,7 +96,8 @@ export const ChatWidget: React.FC = () => {
       const newModelMsg: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'model',
-        text: modelText
+        text: modelText,
+        timestamp: Date.now()
       };
 
       setMessages(prev => [...prev, newModelMsg]);
@@ -119,7 +122,8 @@ export const ChatWidget: React.FC = () => {
         id: Date.now().toString(),
         role: 'model',
         text: errorMessage,
-        isError: true
+        isError: true,
+        timestamp: Date.now()
       }]);
       setLoadingState(LoadingState.ERROR);
     }
@@ -187,7 +191,7 @@ export const ChatWidget: React.FC = () => {
             {messages.map((msg) => (
               <div
                 key={msg.id}
-                className={`flex w-full ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                className={`flex flex-col w-full ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
               >
                 <div
                   className={`max-w-[80%] p-3 rounded-2xl text-sm ${
@@ -198,10 +202,15 @@ export const ChatWidget: React.FC = () => {
                 >
                   {msg.text}
                 </div>
+                {msg.timestamp && (
+                  <span className={`text-[10px] text-stone-400 mt-1 ${msg.role === 'user' ? 'mr-1' : 'ml-1'}`}>
+                    {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                )}
               </div>
             ))}
             {loadingState === LoadingState.LOADING && (
-              <div className="flex justify-start w-full">
+              <div className="flex flex-col items-start w-full">
                  <div className="bg-white p-3 rounded-2xl rounded-bl-none border border-stone-200 shadow-sm flex items-center space-x-2">
                     <Loader2 className="w-4 h-4 text-amber-700 animate-spin" aria-hidden="true" />
                     <span className="text-xs text-stone-500">En train d'écrire...</span>

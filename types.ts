@@ -18,6 +18,7 @@ export interface ChatMessage {
   role: 'user' | 'model';
   text: string;
   isError?: boolean;
+  timestamp?: number;
 }
 
 export enum LoadingState {
