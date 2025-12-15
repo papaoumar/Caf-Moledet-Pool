@@ -101,10 +101,24 @@ export const ChatWidget: React.FC = () => {
       setLoadingState(LoadingState.SUCCESS);
     } catch (error) {
       console.error("Chat error:", error);
+      
+      let errorMessage = "Désolé, une erreur technique est survenue. Veuillez réessayer.";
+
+      if (error instanceof Error) {
+        const errorMsg = error.message.toLowerCase();
+        if (errorMsg.includes('fetch failed') || errorMsg.includes('network')) {
+          errorMessage = "Problème de connexion. Veuillez vérifier votre accès internet.";
+        } else if (errorMsg.includes('429') || errorMsg.includes('quota') || errorMsg.includes('exhausted')) {
+          errorMessage = "Le service est momentanément indisponible en raison d'un grand nombre de demandes. Veuillez réessayer dans quelques instants.";
+        } else if (errorMsg.includes('safety') || errorMsg.includes('blocked')) {
+          errorMessage = "Je ne peux pas répondre à cette demande pour des raisons de sécurité.";
+        }
+      }
+
       setMessages(prev => [...prev, {
         id: Date.now().toString(),
         role: 'model',
-        text: "Désolé, une erreur s'est produite. Veuillez réessayer.",
+        text: errorMessage,
         isError: true
       }]);
       setLoadingState(LoadingState.ERROR);

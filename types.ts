@@ -7,6 +7,12 @@ export interface CafeInfo {
   description: string;
 }
 
+export interface MatchInfo {
+  teams: string;
+  time: string;
+  competition: string;
+}
+
 export interface ChatMessage {
   id: string;
   role: 'user' | 'model';

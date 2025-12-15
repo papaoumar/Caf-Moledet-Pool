@@ -1,4 +1,10 @@
-import { CafeInfo } from './types';
+import { CafeInfo, MatchInfo } from './types';
+
+export const MATCH_OF_THE_DAY: MatchInfo = {
+  teams: "Real Madrid vs FC Barcelone",
+  time: "21:00",
+  competition: "La Liga - El Clásico"
+};
 
 export const CAFE_DATA: CafeInfo = {
   name: "Café Moledet Pool",
@@ -26,6 +32,7 @@ Here are the details you know:
 - Opening Hours: ${CAFE_DATA.hours}
 - Services: Suitable for watching sports matches (football, etc.), Free Wi-Fi, High chairs for children.
 - Atmosphere: Friendly, local, good coffee and beverages.
+- MATCH DU JOUR (TODAY'S MATCH): ${MATCH_OF_THE_DAY.teams} (${MATCH_OF_THE_DAY.competition}) at ${MATCH_OF_THE_DAY.time}. If a user asks about sports, matches, or what's happening today, mention this match enthusiastically!
 
 Rules:
 1. Keep answers concise and friendly.
