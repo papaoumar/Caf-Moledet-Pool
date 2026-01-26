@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageSquare, X, Send, Loader2, Bot, Trash2 } from 'lucide-react';
+import { MessageSquare, X, Send, Loader2, AlertCircle, Trash2 } from 'lucide-react';
 import { GoogleGenAI, Chat, GenerateContentResponse } from "@google/genai";
 import { ChatMessage, LoadingState } from '../types';
 import { SYSTEM_INSTRUCTION } from '../constants';
 
 export const ChatWidget: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [apiKeyMissing, setApiKeyMissing] = useState(false);
   
   // Dynamic welcome message based on time of day
   const getWelcomeMessage = (): ChatMessage => {
@@ -37,9 +38,18 @@ export const ChatWidget: React.FC = () => {
 
   const startNewSession = () => {
     if (!process.env.API_KEY) {
-      console.error("API_KEY is missing!");
+      setApiKeyMissing(true);
+      setMessages(prev => [...prev, {
+        id: 'config-error',
+        role: 'model',
+        text: "⚠️ Le service d'intelligence artificielle est actuellement indisponible (Clé API manquante). Veuillez contacter l'administrateur.",
+        isError: true,
+        timestamp: Date.now()
+      }]);
       return;
     }
+    
+    setApiKeyMissing(false);
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     chatSessionRef.current = ai.chats.create({
       model: 'gemini-2.5-flash',
@@ -69,7 +79,14 @@ export const ChatWidget: React.FC = () => {
 
   const handleSendMessage = async (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (!inputValue.trim() || !chatSessionRef.current) return;
+    if (!inputValue.trim() || apiKeyMissing) return;
+
+    // If session lost but key exists, try to restart
+    if (!chatSessionRef.current && process.env.API_KEY) {
+        startNewSession();
+    }
+    
+    if (!chatSessionRef.current) return;
 
     const userText = inputValue.trim();
     setInputValue('');
@@ -143,7 +160,15 @@ export const ChatWidget: React.FC = () => {
         {isOpen ? (
           <X className="w-6 h-6 text-white" aria-hidden="true" />
         ) : (
-          <MessageSquare className="w-6 h-6 text-white" aria-hidden="true" />
+          <div className="relative">
+            <MessageSquare className="w-6 h-6 text-white" aria-hidden="true" />
+            {apiKeyMissing && (
+                <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                </span>
+            )}
+          </div>
         )}
       </button>
 
@@ -166,17 +191,19 @@ export const ChatWidget: React.FC = () => {
               </div>
               <div>
                 <h3 className="font-bold text-white text-sm">Assistant Moledet</h3>
-                <p className="text-xs text-stone-400">En ligne</p>
+                <p className="text-xs text-stone-400">{apiKeyMissing ? "Indisponible" : "En ligne"}</p>
               </div>
             </div>
-            <button 
-              onClick={handleClearChat}
-              className="text-stone-400 hover:text-white transition-colors p-2 rounded-full hover:bg-stone-800 focus:outline-none focus:ring-2 focus:ring-white/50"
-              title="Effacer l'historique"
-              aria-label="Effacer l'historique de la conversation"
-            >
-              <Trash2 className="w-4 h-4" aria-hidden="true" />
-            </button>
+            {!apiKeyMissing && (
+                <button 
+                  onClick={handleClearChat}
+                  className="text-stone-400 hover:text-white transition-colors p-2 rounded-full hover:bg-stone-800 focus:outline-none focus:ring-2 focus:ring-white/50"
+                  title="Effacer l'historique"
+                  aria-label="Effacer l'historique de la conversation"
+                >
+                  <Trash2 className="w-4 h-4" aria-hidden="true" />
+                </button>
+            )}
           </div>
 
           {/* Messages Area */}
@@ -228,19 +255,25 @@ export const ChatWidget: React.FC = () => {
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Posez une question..."
-              className="flex-1 bg-stone-100 border-0 rounded-full px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-700 focus:outline-none text-stone-800 placeholder-stone-500"
-              disabled={loadingState === LoadingState.LOADING}
+              placeholder={apiKeyMissing ? "Assistant indisponible" : "Posez une question..."}
+              className={`flex-1 bg-stone-100 border-0 rounded-full px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-700 focus:outline-none text-stone-800 placeholder-stone-500 ${apiKeyMissing ? 'cursor-not-allowed opacity-50' : ''}`}
+              disabled={loadingState === LoadingState.LOADING || apiKeyMissing}
             />
             <button
               type="submit"
-              disabled={!inputValue.trim() || loadingState === LoadingState.LOADING}
+              disabled={!inputValue.trim() || loadingState === LoadingState.LOADING || apiKeyMissing}
               className="p-2.5 bg-amber-700 hover:bg-amber-800 disabled:opacity-50 disabled:cursor-not-allowed rounded-full text-white transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-700"
               aria-label="Envoyer le message"
             >
               <Send className="w-4 h-4" aria-hidden="true" />
             </button>
           </form>
+          {apiKeyMissing && (
+              <div className="bg-red-600 text-white text-[10px] py-1 px-4 flex items-center justify-center space-x-2">
+                  <AlertCircle className="w-3 h-3" />
+                  <span>Configuration manquante : Clé API non détectée</span>
+              </div>
+          )}
         </div>
       )}
     </>

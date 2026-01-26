@@ -78,7 +78,7 @@ export const LiveSports: React.FC = () => {
           <button 
             onClick={fetchLiveMatches}
             disabled={loading === LoadingState.LOADING}
-            className="flex items-center space-x-2 bg-emerald-700 hover:bg-emerald-600 text-white px-6 py-3 rounded-2xl transition-all active:scale-95 disabled:opacity-50"
+            className="flex items-center space-x-2 bg-emerald-700 hover:bg-emerald-600 text-white px-6 py-3 rounded-2xl transition-all active:scale-95 disabled:opacity-50 shadow-lg shadow-emerald-900/20"
           >
             <RefreshCw className={`w-4 h-4 ${loading === LoadingState.LOADING ? 'animate-spin' : ''}`} />
             <span className="font-bold text-sm">Actualiser les scores</span>
@@ -87,53 +87,65 @@ export const LiveSports: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {matches.map((match, idx) => (
-            <div key={idx} className="bg-stone-800/50 backdrop-blur-sm border border-stone-700 rounded-3xl p-6 hover:border-emerald-500/50 transition-all group">
+            <div 
+              key={idx} 
+              className="bg-stone-800/40 backdrop-blur-md border border-stone-700/50 rounded-[2rem] p-6 hover:border-emerald-500/50 hover:-translate-y-2 hover:shadow-2xl hover:shadow-emerald-900/30 transition-all duration-300 group cursor-default"
+            >
               <div className="flex justify-between items-start mb-6">
-                <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest bg-emerald-400/10 px-2 py-1 rounded">
+                <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest bg-emerald-400/10 px-2 py-1 rounded border border-emerald-400/20">
                   {match.competition}
                 </span>
-                <div className="flex items-center space-x-1 text-red-500">
-                  <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-ping"></span>
-                  <span className="text-[10px] font-bold uppercase">Live</span>
+                <div className="flex items-center space-x-2 bg-red-500/10 px-2 py-1 rounded-full border border-red-500/20">
+                  <div className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                  </div>
+                  <span className="text-[10px] font-black text-red-500 uppercase tracking-tighter">Live</span>
                 </div>
               </div>
 
               <div className="flex flex-col items-center justify-center space-y-4 mb-8">
-                <div className="text-xl font-bold text-white text-center line-clamp-2">
+                <div className="text-xl font-bold text-white text-center line-clamp-2 min-h-[3.5rem] flex items-center">
                   {match.teams}
                 </div>
-                <div className="text-4xl font-black text-amber-500 tabular-nums tracking-tighter">
-                  {match.score || "VS"}
+                <div className="bg-stone-900/50 px-6 py-3 rounded-2xl border border-stone-700/50">
+                  <div className="text-4xl font-black text-amber-500 tabular-nums tracking-tighter drop-shadow-sm">
+                    {match.score || "VS"}
+                  </div>
                 </div>
                 <div className="text-xs text-stone-500 font-medium">
-                  {match.time || "En cours"}
+                  {match.time || "Match en cours"}
                 </div>
               </div>
 
-              <button className="w-full bg-stone-700/50 hover:bg-emerald-700 text-white py-3 rounded-xl transition-all flex items-center justify-center space-x-2 group-hover:shadow-lg group-hover:shadow-emerald-900/20">
+              <button className="w-full bg-stone-700/30 hover:bg-emerald-700 text-white py-3.5 rounded-2xl transition-all flex items-center justify-center space-x-2 group-hover:shadow-lg group-hover:shadow-emerald-900/40 border border-stone-600/50 hover:border-emerald-500">
                 <Tv className="w-4 h-4" />
-                <span className="text-sm font-bold">Voir au Café</span>
+                <span className="text-sm font-bold">Réserver au Café</span>
               </button>
             </div>
           ))}
 
           {/* Special "Coming Up" Card */}
-          <div className="bg-gradient-to-br from-emerald-900 to-emerald-950 rounded-3xl p-6 border border-emerald-800 flex flex-col justify-between group cursor-pointer">
+          <div className="bg-gradient-to-br from-emerald-900/80 to-emerald-950 rounded-[2rem] p-6 border border-emerald-800/50 flex flex-col justify-between group cursor-pointer hover:shadow-2xl hover:shadow-emerald-900/40 transition-all duration-300 hover:-translate-y-2">
             <div>
-              <Trophy className="w-8 h-8 text-amber-500 mb-4" />
+              <div className="bg-amber-500/20 w-12 h-12 rounded-2xl flex items-center justify-center mb-6">
+                <Trophy className="w-6 h-6 text-amber-500" />
+              </div>
               <h3 className="text-xl font-bold text-white mb-2">Prochaines Affiches</h3>
-              <p className="text-emerald-100/60 text-sm">Ne manquez aucun événement majeur. Nous diffusons tous les matchs de Champions League, La Liga et Premier League.</p>
+              <p className="text-emerald-100/60 text-sm leading-relaxed">Ne manquez aucun événement majeur. Nous diffusons la Champions League, La Liga et la Premier League en 4K.</p>
             </div>
-            <div className="mt-8 flex items-center text-amber-500 font-bold text-sm group-hover:translate-x-1 transition-transform">
-              <span>Consulter le programme complet</span>
-              <ExternalLink className="w-4 h-4 ml-2" />
+            <div className="mt-8 flex items-center text-amber-500 font-bold text-sm group-hover:translate-x-1 transition-transform bg-amber-500/10 p-4 rounded-2xl border border-amber-500/20">
+              <span>Voir le programme</span>
+              <ExternalLink className="w-4 h-4 ml-auto" />
             </div>
           </div>
         </div>
 
         {lastUpdated && (
-          <div className="mt-8 text-center text-stone-600 text-[10px] uppercase tracking-widest font-bold">
-            Dernière mise à jour : {lastUpdated}
+          <div className="mt-10 text-center flex items-center justify-center space-x-2 text-stone-600 text-[10px] uppercase tracking-[0.2em] font-bold">
+            <span className="w-1 h-1 bg-stone-700 rounded-full"></span>
+            <span>Flux mis à jour à {lastUpdated}</span>
+            <span className="w-1 h-1 bg-stone-700 rounded-full"></span>
           </div>
         )}
       </div>
