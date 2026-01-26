@@ -7,36 +7,44 @@ export const MATCH_OF_THE_DAY: MatchInfo = {
 };
 
 export const CAFE_DATA: CafeInfo = {
-  name: "Café Moledet Pool",
+  name: "Café Molédét Pool",
   address: "PRÈS DE L'ÉCOLE ROYALE DE L'ARTILLERIE, Fès 30050",
   phone: "0637-804385",
-  hours: "Ouvert tous les jours ⋅ Ferme à 23:00",
+  hours: "Ouvert tous les jours ⋅ 07:00 – 23:00",
   services: [
-    "Convient pour regarder du sport",
-    "Wi-Fi Gratuit",
-    "Chaises hautes disponibles",
-    "Ambiance familiale",
-    "Terrasse"
+    "Retransmission Sportive",
+    "Espace Billard Professionnel",
+    "Wi-Fi Fibre Optique",
+    "Crèmerie & Sandwicherie",
+    "Terrasse Extérieure",
+    "Espace Climatisé"
   ],
-  description: "Détendez-vous au cœur de Fès. Profitez de nos matchs en direct, d'une connexion Wi-Fi rapide et d'un service chaleureux."
+  description: "L'élégance du billard et la passion du sport. Situé à Fès, le Café Molédét Pool vous accueille dans un cadre unique mêlant tradition et modernité."
 };
+
+export const GALLERY_IMAGES = [
+  { url: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=1000", title: "Ambiance Intérieure" },
+  { url: "https://images.unsplash.com/photo-1628155930542-3c7a64e2c833?q=80&w=1000", title: "Espace Billard" },
+  { url: "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?q=80&w=1000", title: "La Terrasse" },
+  { url: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=1000", title: "Nos Cafés" },
+  { url: "https://images.unsplash.com/photo-1551024601-bec78aea704b?q=80&w=1000", title: "Pâtisseries Maison" },
+  { url: "https://images.unsplash.com/photo-1621230182918-85aa9e39405d?q=80&w=1000", title: "Snacks & Jus" }
+];
 
 export const SYSTEM_INSTRUCTION = `
 You are the virtual assistant for "${CAFE_DATA.name}", a cafe located in Fès, Morocco.
-Your goal is to answer customer questions helpfully and politely in French (primary) or English (if the user speaks English).
+Your goal is to answer customer questions helpfully and politely in French (primary) or English.
 
-Here are the details you know:
-- Name: ${CAFE_DATA.name}
-- Address: ${CAFE_DATA.address} (Near the Royal Artillery School)
-- Phone: ${CAFE_DATA.phone}
-- Opening Hours: ${CAFE_DATA.hours}
-- Services: Suitable for watching sports matches (football, etc.), Free Wi-Fi, High chairs for children.
-- Atmosphere: Friendly, local, good coffee and beverages.
-- MATCH DU JOUR (TODAY'S MATCH): ${MATCH_OF_THE_DAY.teams} (${MATCH_OF_THE_DAY.competition}) at ${MATCH_OF_THE_DAY.time}. If a user asks about sports, matches, or what's happening today, mention this match enthusiastically!
+Specific details from photos:
+- The interior features elegant green paneled walls with artistic decorations.
+- We have a professional billiard (pool) table.
+- We serve coffee, tea, fresh juices (Pulpy), pastries (Mille-feuille style), and sandwiches.
+- There is a "Crèmerie" section.
+- The terrace has a cozy atmosphere with red accent lighting at night.
+- Landmark: Near the Royal Artillery School (École Royale de l'Artillerie).
 
 Rules:
-1. Keep answers concise and friendly.
-2. If asked about the menu, say you don't have the specific daily menu but offer general cafe items like coffee, tea, juices, and snacks.
-3. If asked about location, provide the address and mention the landmark (Royal Artillery School).
-4. Always be polite.
+1. Be enthusiastic about the Billiards and the sports atmosphere.
+2. Mention our "Crèmerie" and "Sandwicherie" when asked about food.
+3. Keep answers concise and welcoming.
 `;

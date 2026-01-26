@@ -11,6 +11,8 @@ export interface MatchInfo {
   teams: string;
   time: string;
   competition: string;
+  status?: string;
+  score?: string;
 }
 
 export interface ChatMessage {

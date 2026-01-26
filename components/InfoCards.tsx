@@ -1,118 +1,135 @@
 import React from 'react';
 import { CAFE_DATA, MATCH_OF_THE_DAY } from '../constants';
-import { Wifi, Tv, Baby, Phone, Map, Coffee, Clock } from 'lucide-react';
+import { Wifi, Tv, Gamepad2, Phone, Map, Coffee, Clock, Activity } from 'lucide-react';
 
 export const InfoCards: React.FC = () => {
   return (
-    <div className="py-12 md:py-16 px-4 max-w-7xl mx-auto bg-stone-50">
+    <div className="py-16 px-4 max-w-7xl mx-auto">
       
-      {/* Services Grid */}
-      <div className="mb-12 md:mb-16">
-        <h2 className="text-2xl md:text-3xl font-bold text-stone-800 text-center mb-8 md:mb-12">Nos Services</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-          
-          {/* Sports Card */}
-          <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm hover:shadow-xl border border-stone-100 flex flex-col items-center text-center transition-all hover:-translate-y-2 duration-300 relative overflow-hidden group cursor-default">
-            {/* Top accent line */}
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 to-amber-700"></div>
-            
-            <div className="bg-amber-100 p-4 rounded-full mb-4 group-hover:bg-amber-200 group-hover:scale-110 transition-all duration-300">
-              <Tv className="w-8 h-8 text-amber-700" aria-hidden="true" />
-            </div>
-            <h3 className="text-xl font-semibold text-stone-800 mb-2">Sports en Direct</h3>
-            <p className="text-stone-600 mb-6 text-sm md:text-base">L'endroit idéal pour suivre vos matchs préférés dans une ambiance passionnée.</p>
-            
-            {/* Match of the Day Card */}
-            <div className="w-full bg-stone-900 rounded-xl p-4 text-white transform transition-all hover:scale-105 shadow-md hover:shadow-lg border border-stone-800 mt-auto">
-              <div className="text-xs text-amber-400 font-bold uppercase tracking-wider mb-2 flex items-center justify-center">
-                <span className="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
-                Match du Jour
-              </div>
-              <div className="font-bold text-base md:text-lg leading-tight mb-1">{MATCH_OF_THE_DAY.teams}</div>
-              <div className="flex justify-between items-center text-sm text-stone-400 mt-2 pt-2 border-t border-stone-800">
-                  <span className="truncate pr-2">{MATCH_OF_THE_DAY.competition}</span>
-                  <span className="flex items-center text-white whitespace-nowrap bg-stone-800 px-2 py-1 rounded">
-                    <Clock className="w-3 h-3 mr-1" aria-hidden="true" /> 
-                    {MATCH_OF_THE_DAY.time}
-                  </span>
-              </div>
-            </div>
+      {/* Main Service Pillars */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+        
+        {/* Billiards Card */}
+        <div className="bg-emerald-900 p-8 rounded-3xl shadow-xl flex flex-col items-center text-center transition-all hover:-translate-y-2 duration-300 group relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-4 opacity-10">
+            <Gamepad2 className="w-24 h-24 text-white" />
           </div>
-
-          {/* Wi-Fi Card */}
-          <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm hover:shadow-xl border border-stone-100 flex flex-col items-center text-center transition-all hover:-translate-y-2 duration-300 group cursor-default">
-            <div className="bg-amber-100 p-4 rounded-full mb-4 group-hover:bg-amber-200 group-hover:scale-110 transition-all duration-300">
-              <Wifi className="w-8 h-8 text-amber-700" aria-hidden="true" />
-            </div>
-            <h3 className="text-xl font-semibold text-stone-800 mb-2">Wi-Fi Gratuit</h3>
-            <p className="text-stone-600 text-sm md:text-base">Restez connectés avec notre connexion haut débit gratuite pour tous les clients.</p>
+          <div className="bg-amber-500/20 p-5 rounded-2xl mb-6 group-hover:scale-110 transition-transform">
+            <Gamepad2 className="w-10 h-10 text-amber-500" aria-hidden="true" />
           </div>
-
-          {/* Families Card */}
-          <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm hover:shadow-xl border border-stone-100 flex flex-col items-center text-center transition-all hover:-translate-y-2 duration-300 group cursor-default">
-            <div className="bg-amber-100 p-4 rounded-full mb-4 group-hover:bg-amber-200 group-hover:scale-110 transition-all duration-300">
-              <Baby className="w-8 h-8 text-amber-700" aria-hidden="true" />
-            </div>
-            <h3 className="text-xl font-semibold text-stone-800 mb-2">Familles Bienvenues</h3>
-            <p className="text-stone-600 text-sm md:text-base">Chaises hautes disponibles et environnement adapté pour les familles.</p>
+          <h3 className="text-2xl font-bold text-white mb-3">Espace Billard</h3>
+          <p className="text-emerald-100/80 text-sm leading-relaxed mb-6">
+            Des tables professionnelles et une ambiance feutrée pour les amateurs de précision.
+          </p>
+          <div className="mt-auto inline-block px-4 py-1 rounded-full bg-emerald-800 text-xs font-bold text-emerald-400 uppercase tracking-widest border border-emerald-700">
+            Ouvert 7j/7
           </div>
         </div>
+
+        {/* Sports & TV Card */}
+        <div className="bg-white p-8 rounded-3xl shadow-lg border border-stone-100 flex flex-col items-center text-center transition-all hover:-translate-y-2 duration-300 group relative overflow-hidden">
+          <div className="bg-emerald-100 p-5 rounded-2xl mb-6 group-hover:bg-emerald-200 transition-colors relative">
+            <Tv className="w-10 h-10 text-emerald-900" aria-hidden="true" />
+            <span className="absolute -top-1 -right-1 flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+            </span>
+          </div>
+          <h3 className="text-2xl font-bold text-emerald-950 mb-3">Grands Matchs HD</h3>
+          <p className="text-stone-600 text-sm leading-relaxed mb-6">
+            L'effervescence du stade sur nos écrans HD 1080p. Streaming temps réel et passion garantie.
+          </p>
+          
+          <div className="w-full bg-stone-900 rounded-2xl p-4 text-white shadow-lg border border-stone-800 mt-auto">
+            <div className="text-[10px] text-amber-500 font-bold uppercase tracking-widest mb-2 flex items-center justify-center">
+              <Activity className="w-3 h-3 mr-2 animate-pulse" />
+              Diffusion en Direct
+            </div>
+            <div className="font-bold text-sm leading-tight mb-2">{MATCH_OF_THE_DAY.teams}</div>
+            <div className="flex justify-between items-center text-[10px] text-stone-400 pt-2 border-t border-stone-800">
+                <span className="truncate">{MATCH_OF_THE_DAY.competition}</span>
+                <span className="text-white font-bold">{MATCH_OF_THE_DAY.time}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Cafe & Food Card */}
+        <div className="bg-white p-8 rounded-3xl shadow-lg border border-stone-100 flex flex-col items-center text-center transition-all hover:-translate-y-2 duration-300 group">
+          <div className="bg-emerald-100 p-5 rounded-2xl mb-6 group-hover:bg-emerald-200 transition-colors">
+            <Coffee className="w-10 h-10 text-emerald-900" aria-hidden="true" />
+          </div>
+          <h3 className="text-2xl font-bold text-emerald-950 mb-3">Crèmerie & Plus</h3>
+          <p className="text-stone-600 text-sm leading-relaxed mb-6">
+            Découvrez nos pâtisseries fraîches, nos jus vitaminés et notre carte de sandwichs gourmands.
+          </p>
+          <div className="flex gap-2 mt-auto">
+            <div className="p-2 bg-stone-100 rounded-lg"><Wifi className="w-4 h-4 text-emerald-700" /></div>
+            <div className="p-2 bg-stone-100 rounded-lg"><Wifi className="w-4 h-4 text-emerald-700" /></div>
+          </div>
+        </div>
+
       </div>
 
-      {/* Contact & Location Section */}
-      <div className="bg-stone-900 rounded-3xl overflow-hidden shadow-2xl">
+      {/* Contact & Map Section */}
+      <div className="bg-emerald-950 rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/5">
         <div className="grid grid-cols-1 lg:grid-cols-2">
           
-          <div className="p-6 md:p-10 lg:p-16 flex flex-col justify-center text-white">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8 text-amber-400">Nous trouver</h2>
+          <div className="p-8 md:p-16 flex flex-col justify-center text-white relative">
+            <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl"></div>
             
-            <div className="space-y-6">
-              <div className="flex items-start space-x-4">
-                <Map className="w-6 h-6 text-stone-400 mt-1 flex-shrink-0" aria-hidden="true" />
+            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-white relative">
+              Venez nous <span className="text-amber-500">rendre visite</span>
+            </h2>
+            
+            <div className="space-y-8 relative">
+              <div className="flex items-start space-x-5">
+                <div className="w-10 h-10 rounded-xl bg-emerald-900 flex items-center justify-center flex-shrink-0 border border-emerald-800">
+                   <Map className="w-5 h-5 text-amber-500" aria-hidden="true" />
+                </div>
                 <div>
-                  <h4 className="font-semibold text-lg">Adresse</h4>
-                  <p className="text-stone-300 text-sm md:text-base">{CAFE_DATA.address}</p>
+                  <h4 className="font-bold text-lg mb-1">Localisation</h4>
+                  <p className="text-emerald-100/60 text-sm leading-relaxed">{CAFE_DATA.address}</p>
                 </div>
               </div>
 
-              <div className="flex items-start space-x-4">
-                <Phone className="w-6 h-6 text-stone-400 mt-1 flex-shrink-0" aria-hidden="true" />
+              <div className="flex items-start space-x-5">
+                <div className="w-10 h-10 rounded-xl bg-emerald-900 flex items-center justify-center flex-shrink-0 border border-emerald-800">
+                   <Phone className="w-5 h-5 text-amber-500" aria-hidden="true" />
+                </div>
                 <div>
-                  <h4 className="font-semibold text-lg">Téléphone</h4>
-                  <p className="text-stone-300 text-sm md:text-base">{CAFE_DATA.phone}</p>
+                  <h4 className="font-bold text-lg mb-1">Téléphone</h4>
+                  <p className="text-emerald-100/60 text-sm">{CAFE_DATA.phone}</p>
                 </div>
               </div>
 
-              <div className="flex items-start space-x-4">
-                <Coffee className="w-6 h-6 text-stone-400 mt-1 flex-shrink-0" aria-hidden="true" />
+              <div className="flex items-start space-x-5">
+                <div className="w-10 h-10 rounded-xl bg-emerald-900 flex items-center justify-center flex-shrink-0 border border-emerald-800">
+                   <Clock className="w-5 h-5 text-amber-500" aria-hidden="true" />
+                </div>
                 <div>
-                  <h4 className="font-semibold text-lg">Horaires</h4>
-                  <p className="text-stone-300 text-sm md:text-base">{CAFE_DATA.hours}</p>
+                  <h4 className="font-bold text-lg mb-1">Horaires d'Ouverture</h4>
+                  <p className="text-emerald-100/60 text-sm">{CAFE_DATA.hours}</p>
                 </div>
               </div>
             </div>
 
-            <div className="mt-8 md:mt-10">
-               <button 
-                className="w-full sm:w-auto bg-amber-700 hover:bg-amber-800 text-white font-bold py-3 px-8 rounded-full transition-colors duration-300 shadow-lg focus:outline-none focus:ring-4 focus:ring-amber-500/50"
-                aria-label={`Appeler le café au ${CAFE_DATA.phone}`}
+            <div className="mt-12">
+               <a 
+                href={`tel:${CAFE_DATA.phone}`}
+                className="inline-flex items-center bg-amber-600 hover:bg-amber-700 text-white font-bold py-4 px-10 rounded-2xl transition-all duration-300 shadow-xl hover:shadow-amber-500/20 active:scale-95"
                >
-                 Appeler maintenant
-               </button>
+                 Réserver une Table
+               </a>
             </div>
           </div>
 
-          <div className="h-64 md:h-96 lg:h-auto bg-stone-800 relative">
+          <div className="h-80 lg:h-auto relative">
              <img 
-              src="https://picsum.photos/seed/fesmap/800/800" 
-              alt="Carte stylisée montrant la localisation du café à Fès" 
-              className="w-full h-full object-cover opacity-60 grayscale hover:grayscale-0 transition-all duration-700"
+              src="https://images.unsplash.com/photo-1526772662000-3f88f10405ff?q=80&w=1000" 
+              alt="Café extérieur à Fès" 
+              className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000"
             />
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <span className="bg-stone-900/80 text-white px-4 py-2 rounded backdrop-blur border border-white/20 text-sm md:text-base">
-                    Carte interactive indisponible
-                </span>
-            </div>
+            <div className="absolute inset-0 bg-emerald-950/40"></div>
           </div>
 
         </div>
