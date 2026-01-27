@@ -1,4 +1,4 @@
-import { CafeInfo, MatchInfo } from './types';
+import { CafeInfo, MatchInfo, MenuItem, CafeEvent } from './types';
 
 export const MATCH_OF_THE_DAY: MatchInfo = {
   teams: "Real Madrid vs FC Barcelone",
@@ -6,17 +6,31 @@ export const MATCH_OF_THE_DAY: MatchInfo = {
   competition: "La Liga - El Clásico"
 };
 
+export const MENU_ITEMS: MenuItem[] = [
+  { name: "Mille-feuille Maison", description: "Pâtisserie traditionnelle à la crème vanille", price: "15 DH", category: "Crèmerie" },
+  { name: "Jus Pulpy Frais", description: "Orange ou Citron avec pulpe fraîche", price: "12 DH", category: "Boissons" },
+  { name: "Sandwich Molédét", description: "Poulet grillé, sauce maison et frites", price: "35 DH", category: "Sandwichs" },
+  { name: "Petit Déjeuner Complet", description: "Café, jus, tartines et viennoiseries", price: "25 DH", category: "Spécialités" },
+  { name: "Espresso Premium", description: "Mélange italien corsé", price: "10 DH", category: "Boissons" },
+  { name: "Gâteau Chocolat", description: "Moelleux au coeur fondant", price: "18 DH", category: "Crèmerie" }
+];
+
+export const EVENTS: CafeEvent[] = [
+  { id: '1', title: "Tournoi Billard 8-Ball", date: "Dimanche 15 Février", description: "Grand tournoi amateur avec prix à gagner.", type: "Tournament" },
+  { id: '2', title: "Diffusion Finale LDC", date: "Samedi 31 Mai", description: "Ambiance stade garantie sur écrans HD.", type: "Sporting" }
+];
+
 export const CAFE_DATA: CafeInfo = {
   name: "Café Molédét Pool",
   address: "PRÈS DE L'ÉCOLE ROYALE DE L'ARTILLERIE, Fès 30050",
   phone: "0637-804385",
   hours: "Ouvert tous les jours ⋅ 07:00 – 23:00",
   services: [
-    "Retransmission Sportive",
-    "Espace Billard Professionnel",
+    "Retransmission Sportive HD",
+    "Billard Professionnel",
     "Wi-Fi Fibre Optique",
     "Crèmerie & Sandwicherie",
-    "Terrasse Extérieure",
+    "Terrasse Illuminée",
     "Espace Climatisé"
   ],
   description: "L'élégance du billard et la passion du sport. Situé à Fès, le Café Molédét Pool vous accueille dans un cadre unique mêlant tradition et modernité."
@@ -46,5 +60,6 @@ Specific details from photos:
 Rules:
 1. Be enthusiastic about the Billiards and the sports atmosphere.
 2. Mention our "Crèmerie" and "Sandwicherie" when asked about food.
-3. Keep answers concise and welcoming.
+3. If users ask about events, mention the Billiard Tournament or match diffusions.
+4. Keep answers concise and welcoming.
 `;

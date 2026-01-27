@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageSquare, X, Send, Loader2, AlertCircle, Trash2 } from 'lucide-react';
+import { MessageSquare, X, Send, Loader2, AlertCircle, Trash2, Sparkles } from 'lucide-react';
 import { GoogleGenAI, Chat, GenerateContentResponse } from "@google/genai";
 import { ChatMessage, LoadingState } from '../types';
 import { SYSTEM_INSTRUCTION } from '../constants';
@@ -8,7 +8,13 @@ export const ChatWidget: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [apiKeyMissing, setApiKeyMissing] = useState(false);
   
-  // Dynamic welcome message based on time of day
+  const suggestions = [
+    "Quel est le menu ?",
+    "Horaires du billard",
+    "Matchs ce soir ?",
+    "Où êtes-vous ?"
+  ];
+
   const getWelcomeMessage = (): ChatMessage => {
     const hour = new Date().getHours();
     let text = "";
@@ -39,27 +45,19 @@ export const ChatWidget: React.FC = () => {
   const startNewSession = () => {
     if (!process.env.API_KEY) {
       setApiKeyMissing(true);
-      setMessages(prev => [...prev, {
-        id: 'config-error',
-        role: 'model',
-        text: "⚠️ Le service d'intelligence artificielle est actuellement indisponible (Clé API manquante). Veuillez contacter l'administrateur.",
-        isError: true,
-        timestamp: Date.now()
-      }]);
       return;
     }
     
     setApiKeyMissing(false);
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     chatSessionRef.current = ai.chats.create({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3-flash-preview',
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
       },
     });
   };
 
-  // Initialize Gemini Chat Session on mount
   useEffect(() => {
     startNewSession();
   }, []);
@@ -77,25 +75,22 @@ export const ChatWidget: React.FC = () => {
     startNewSession();
   };
 
-  const handleSendMessage = async (e?: React.FormEvent) => {
-    e?.preventDefault();
-    if (!inputValue.trim() || apiKeyMissing) return;
+  const handleSendMessage = async (text?: string) => {
+    const messageToSend = text || inputValue.trim();
+    if (!messageToSend || apiKeyMissing) return;
 
-    // If session lost but key exists, try to restart
     if (!chatSessionRef.current && process.env.API_KEY) {
         startNewSession();
     }
     
     if (!chatSessionRef.current) return;
 
-    const userText = inputValue.trim();
-    setInputValue('');
+    if (!text) setInputValue('');
     
-    // Add user message
     const newUserMsg: ChatMessage = {
       id: Date.now().toString(),
       role: 'user',
-      text: userText,
+      text: messageToSend,
       timestamp: Date.now()
     };
     
@@ -103,9 +98,8 @@ export const ChatWidget: React.FC = () => {
     setLoadingState(LoadingState.LOADING);
 
     try {
-      // Send to Gemini
       const response: GenerateContentResponse = await chatSessionRef.current.sendMessage({
-        message: userText
+        message: messageToSend
       });
       
       const modelText = response.text || "Désolé, je n'ai pas compris.";
@@ -121,24 +115,10 @@ export const ChatWidget: React.FC = () => {
       setLoadingState(LoadingState.SUCCESS);
     } catch (error) {
       console.error("Chat error:", error);
-      
-      let errorMessage = "Désolé, une erreur technique est survenue. Veuillez réessayer.";
-
-      if (error instanceof Error) {
-        const errorMsg = error.message.toLowerCase();
-        if (errorMsg.includes('fetch failed') || errorMsg.includes('network')) {
-          errorMessage = "Problème de connexion. Veuillez vérifier votre accès internet.";
-        } else if (errorMsg.includes('429') || errorMsg.includes('quota') || errorMsg.includes('exhausted')) {
-          errorMessage = "Le service est momentanément indisponible en raison d'un grand nombre de demandes. Veuillez réessayer dans quelques instants.";
-        } else if (errorMsg.includes('safety') || errorMsg.includes('blocked')) {
-          errorMessage = "Je ne peux pas répondre à cette demande pour des raisons de sécurité.";
-        }
-      }
-
       setMessages(prev => [...prev, {
         id: Date.now().toString(),
         role: 'model',
-        text: errorMessage,
+        text: "Désolé, une erreur technique est survenue.",
         isError: true,
         timestamp: Date.now()
       }]);
@@ -148,132 +128,94 @@ export const ChatWidget: React.FC = () => {
 
   return (
     <>
-      {/* Toggle Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`fixed bottom-6 right-6 z-50 p-4 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-amber-500/50 ${
-          isOpen ? 'bg-stone-800 rotate-90' : 'bg-amber-700 hover:bg-amber-800'
+        className={`fixed bottom-6 right-6 z-50 p-4 rounded-full shadow-2xl transition-all duration-500 transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-amber-500/50 ${
+          isOpen ? 'bg-stone-900 rotate-90' : 'bg-emerald-800 hover:bg-emerald-900'
         }`}
-        aria-label={isOpen ? "Fermer le chat" : "Ouvrir l'assistant virtuel"}
-        aria-expanded={isOpen}
       >
-        {isOpen ? (
-          <X className="w-6 h-6 text-white" aria-hidden="true" />
-        ) : (
-          <div className="relative">
-            <MessageSquare className="w-6 h-6 text-white" aria-hidden="true" />
-            {apiKeyMissing && (
-                <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-                </span>
-            )}
-          </div>
-        )}
+        {isOpen ? <X className="w-6 h-6 text-white" /> : <MessageSquare className="w-6 h-6 text-white" />}
       </button>
 
-      {/* Chat Window */}
       {isOpen && (
-        <div 
-          className="fixed bottom-24 right-6 z-40 w-full max-w-[360px] h-[500px] bg-white rounded-2xl shadow-2xl border border-stone-200 flex flex-col overflow-hidden animate-fade-in-up"
-          role="dialog"
-          aria-label="Assistant virtuel Café Moledet"
-        >
-          {/* Header */}
-          <div className="bg-stone-900 p-4 flex items-center justify-between">
+        <div className="fixed bottom-24 right-6 z-40 w-full max-w-[380px] h-[600px] bg-white rounded-[2rem] shadow-[0_30px_90px_rgba(0,0,0,0.2)] border border-stone-200 flex flex-col overflow-hidden animate-fade-in-up">
+          <div className="bg-emerald-950 p-6 flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-full overflow-hidden bg-white border border-stone-600 flex-shrink-0">
+              <div className="w-12 h-12 rounded-2xl overflow-hidden bg-white border-2 border-emerald-500 flex-shrink-0">
                 <img 
                   src="https://img.freepik.com/premium-vector/billiard-pool-logo-vector-design_255554-150.jpg" 
-                  alt="Logo Café Moledet Pool" 
+                  alt="Logo" 
                   className="w-full h-full object-cover"
                 />
               </div>
               <div>
-                <h3 className="font-bold text-white text-sm">Assistant Moledet</h3>
-                <p className="text-xs text-stone-400">{apiKeyMissing ? "Indisponible" : "En ligne"}</p>
+                <h3 className="font-black text-white text-sm tracking-tight">AI Assistant</h3>
+                <div className="flex items-center space-x-1.5">
+                    <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                    <span className="text-[10px] text-emerald-100/60 font-bold uppercase tracking-widest">En ligne</span>
+                </div>
               </div>
             </div>
-            {!apiKeyMissing && (
-                <button 
-                  onClick={handleClearChat}
-                  className="text-stone-400 hover:text-white transition-colors p-2 rounded-full hover:bg-stone-800 focus:outline-none focus:ring-2 focus:ring-white/50"
-                  title="Effacer l'historique"
-                  aria-label="Effacer l'historique de la conversation"
-                >
-                  <Trash2 className="w-4 h-4" aria-hidden="true" />
-                </button>
-            )}
+            <button onClick={handleClearChat} className="text-white/40 hover:text-white transition-colors p-2 rounded-xl hover:bg-white/10">
+              <Trash2 className="w-4 h-4" />
+            </button>
           </div>
 
-          {/* Messages Area */}
-          <div 
-            className="flex-1 overflow-y-auto p-4 bg-stone-50 space-y-4 scrollbar-hide"
-            role="log"
-            aria-live="polite"
-            aria-relevant="additions"
-            tabIndex={0}
-            aria-label="Historique des messages"
-          >
+          <div className="flex-1 overflow-y-auto p-6 bg-stone-50 space-y-6 scrollbar-hide">
             {messages.map((msg) => (
-              <div
-                key={msg.id}
-                className={`flex flex-col w-full ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
-              >
-                <div
-                  className={`max-w-[80%] p-3 rounded-2xl text-sm ${
-                    msg.role === 'user'
-                      ? 'bg-amber-700 text-white rounded-br-none'
-                      : 'bg-white text-stone-800 border border-stone-200 rounded-bl-none shadow-sm'
-                  } ${msg.isError ? 'bg-red-50 text-red-600 border-red-200' : ''}`}
-                >
+              <div key={msg.id} className={`flex flex-col w-full ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
+                <div className={`max-w-[85%] p-4 rounded-[1.5rem] text-sm leading-relaxed ${
+                  msg.role === 'user' ? 'bg-emerald-800 text-white rounded-tr-none shadow-lg' : 'bg-white text-stone-800 border border-stone-200 rounded-tl-none shadow-sm'
+                } ${msg.isError ? 'bg-red-50 text-red-600 border-red-200' : ''}`}>
                   {msg.text}
                 </div>
-                {msg.timestamp && (
-                  <span className={`text-[10px] text-stone-400 mt-1 ${msg.role === 'user' ? 'mr-1' : 'ml-1'}`}>
-                    {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                )}
+                <span className={`text-[10px] text-stone-400 mt-2 font-bold uppercase tracking-widest ${msg.role === 'user' ? 'mr-1' : 'ml-1'}`}>
+                  {new Date(msg.timestamp || 0).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
               </div>
             ))}
             {loadingState === LoadingState.LOADING && (
-              <div className="flex flex-col items-start w-full">
-                 <div className="bg-white p-3 rounded-2xl rounded-bl-none border border-stone-200 shadow-sm flex items-center space-x-2">
-                    <Loader2 className="w-4 h-4 text-amber-700 animate-spin" aria-hidden="true" />
-                    <span className="text-xs text-stone-500">En train d'écrire...</span>
-                 </div>
+              <div className="flex items-center space-x-2 text-stone-400">
+                <Loader2 className="w-4 h-4 animate-spin text-emerald-800" />
+                <span className="text-[10px] font-bold uppercase tracking-widest">Réflexion IA...</span>
               </div>
             )}
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Input Area */}
-          <form onSubmit={handleSendMessage} className="p-3 bg-white border-t border-stone-100 flex items-center space-x-2">
-            <label htmlFor="chat-input" className="sr-only">Votre message</label>
-            <input
-              id="chat-input"
-              type="text"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              placeholder={apiKeyMissing ? "Assistant indisponible" : "Posez une question..."}
-              className={`flex-1 bg-stone-100 border-0 rounded-full px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-700 focus:outline-none text-stone-800 placeholder-stone-500 ${apiKeyMissing ? 'cursor-not-allowed opacity-50' : ''}`}
-              disabled={loadingState === LoadingState.LOADING || apiKeyMissing}
-            />
-            <button
-              type="submit"
-              disabled={!inputValue.trim() || loadingState === LoadingState.LOADING || apiKeyMissing}
-              className="p-2.5 bg-amber-700 hover:bg-amber-800 disabled:opacity-50 disabled:cursor-not-allowed rounded-full text-white transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-700"
-              aria-label="Envoyer le message"
-            >
-              <Send className="w-4 h-4" aria-hidden="true" />
-            </button>
-          </form>
-          {apiKeyMissing && (
-              <div className="bg-red-600 text-white text-[10px] py-1 px-4 flex items-center justify-center space-x-2">
-                  <AlertCircle className="w-3 h-3" />
-                  <span>Configuration manquante : Clé API non détectée</span>
-              </div>
-          )}
+          <div className="p-4 bg-white border-t border-stone-100">
+            {messages.length === 1 && (
+                <div className="flex flex-wrap gap-2 mb-4">
+                    {suggestions.map(s => (
+                        <button 
+                            key={s} 
+                            onClick={() => handleSendMessage(s)}
+                            className="text-[10px] font-bold bg-stone-100 text-stone-600 px-3 py-1.5 rounded-lg border border-stone-200 hover:bg-emerald-50 hover:border-emerald-200 hover:text-emerald-800 transition-all flex items-center space-x-1"
+                        >
+                            <Sparkles className="w-3 h-3" />
+                            <span>{s}</span>
+                        </button>
+                    ))}
+                </div>
+            )}
+            <form onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }} className="flex items-center space-x-2">
+              <input
+                type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                placeholder="Écrivez ici..."
+                className="flex-1 bg-stone-100 border-0 rounded-2xl px-5 py-3 text-sm focus:ring-2 focus:ring-emerald-800 focus:outline-none text-stone-800"
+                disabled={loadingState === LoadingState.LOADING || apiKeyMissing}
+              />
+              <button
+                type="submit"
+                disabled={!inputValue.trim() || loadingState === LoadingState.LOADING || apiKeyMissing}
+                className="p-3 bg-emerald-800 hover:bg-emerald-900 disabled:opacity-50 rounded-2xl text-white transition-all shadow-lg"
+              >
+                <Send className="w-5 h-5" />
+              </button>
+            </form>
+          </div>
         </div>
       )}
     </>
